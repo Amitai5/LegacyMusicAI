@@ -9,4 +9,4 @@ The lightweight orchestration application uses Python 3.11 and `uv`. Large model
 | SoulX-Singer | Conda | Primary zero-shot singing voice conversion |
 | Seed-VC | Conda or isolated virtual environment | Optional voice conversion and fine-tuning |
 
-The application will invoke engine adapters through structured subprocess contracts before considering any in-process integration.
+The application invokes ACE-Step through its loopback HTTP API and owns a short-lived service by default during generation. SoulX preprocessing and SVC run through structured subprocess contracts. Artist data and authorization remain in the application layer; upstream environments never discover or select an artist.

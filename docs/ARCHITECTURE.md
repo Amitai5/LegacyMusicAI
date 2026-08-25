@@ -28,18 +28,18 @@ Shared foundation weights belong in `models/shared/`. Artist-specific recordings
 
 Source recordings are copied into `data/raw/originals/<song-id>/` and addressed by SHA-256. Preprocessing writes derived files to separate directories. No pipeline stage receives permission to mutate an original path.
 
-Every execution creates a unique run directory. State transitions are append-only and atomic:
+Every generation creates a unique run directory. State transitions are append-only and atomic:
 
 ```text
 CREATED -> MUSIC_GENERATED -> VOCALS_SEPARATED -> VOICE_CONVERTED
         -> MIXED -> COMPLETE
 ```
 
-A failure records the failed stage and subprocess evidence. Resume begins after the last verified completed stage. Reproduction creates a new run linked to its parent.
+A failure records the failed stage while retaining prior artifacts. Resume and reproduction are represented in the contracts and remain backlog command work.
 
 ## Environment isolation
 
-The application package remains lightweight. ACE-Step, SoulX-Singer, and Seed-VC use isolated upstream checkouts and environments. Initial adapters invoke structured subprocess commands and record the executable, reviewed revision, arguments, exit code, timestamps, stdout, stderr, and output hashes.
+The application package remains lightweight. ACE-Step and SoulX-Singer use pinned, isolated upstream checkouts and environments. ACE generation uses a loopback API; the default managed process exits before SoulX to make the sequential pipeline fit an 8 GB GPU. SoulX preprocessing and conversion use argument-list subprocesses with private project-local caches. Outputs and provenance retain model, adapter, seed, input, and artifact hashes.
 
 ## Safety gate
 

@@ -2,23 +2,23 @@ engine:
   id: ace-step
   repository_url: https://github.com/ACE-Step/ACE-Step-1.5.git
   repository_path: vendor/ACE-Step-1.5
-  executable: vendor/ACE-Step-1.5/.venv/bin/python
+  api_url: http://127.0.0.1:8001
+  managed_by_default: true
 
 models:
   checkpoint_dir: models/shared/ace-step
   model_variant: turbo
 
 training:
-  preset: vram_12gb
+  preset: vram_8gb
   adapter: lora
-  rank: 32
+  rank: 16
   batch_size: 1
-  optimizer: adamw8bit
-  encoder_offloading: true
+  gradient_accumulation: 4
   gradient_checkpointing: true
-  epochs: 100
-  save_every: 10
+  epochs: 10
+  save_every: 5
 
 generation:
-  offload_to_cpu: auto
-  initialize_language_model: auto
+  offload_to_cpu: true
+  initialize_language_model: false

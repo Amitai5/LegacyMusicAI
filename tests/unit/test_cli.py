@@ -12,6 +12,8 @@ def test_help_when_requested_lists_foundation_commands() -> None:
     assert result.exit_code == 0
     assert "Authorization-first" in result.stdout
     assert "doctor" in result.stdout
+    assert "train" in result.stdout
+    assert "voice" in result.stdout
 
 
 def test_version_when_requested_prints_package_version() -> None:

@@ -2,6 +2,8 @@
 
 This backlog translates the multi-artist implementation specification into dependency-ordered, independently reviewable tasks. Stable task IDs are mirrored in GitHub Issues. The MVP follows the specification's ten milestones; explicitly later features remain in a separate post-MVP milestone.
 
+The local core runtime is operational: pinned ACE-Step and SoulX installs, authorization-gated ingest, dataset preparation and LoRA API orchestration, stock/selected-adapter generation, curated voice conversion, lossless mixing, and provenance have implementation and synthetic/local-model evidence. Open issues continue to track deeper evaluation, resume/reproduction, release gates, second-artist acceptance, operations, and post-MVP interfaces.
+
 Live tracking: [all implementation issues](https://github.com/Amitai5/LegacyMusicAI/issues?q=is%3Aissue%20is%3Aopen%20label%3Aimplementation) and [milestone progress](https://github.com/Amitai5/LegacyMusicAI/milestones).
 
 ## Delivery rules

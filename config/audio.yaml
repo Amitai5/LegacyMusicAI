@@ -1,5 +1,5 @@
 normalization:
-  sample_rate_hz: 44100
+  sample_rate_hz: 48000
   channels: 2
   sample_format: pcm_s24le
   preserve_dynamics: true

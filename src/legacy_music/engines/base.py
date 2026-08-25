@@ -24,7 +24,7 @@ class StemResult(BaseModel):
 class MusicEngine(Protocol):
     """Boundary implemented by a complete-song generation engine."""
 
-    def generate(self, request: MusicGenerationRequest, output: Path) -> Path:
+    def generate(self, request: MusicGenerationRequest, lyrics: str, output: Path) -> Path:
         """Generate a complete draft song at the requested output path."""
         ...
 

@@ -1,13 +1,13 @@
 # Troubleshooting
 
-Run the lightweight diagnostic first:
+Run the strict diagnostic first:
 
 ```bash
-uv run legacy-music doctor
+uv run legacy-music doctor --strict --root .
 ```
 
-The command reports Python, Git, uv, FFmpeg, FFprobe, NVIDIA tooling, and Conda availability without downloading or changing anything.
+The command reports Python, Git, uv, optional FFmpeg/FFprobe, NVIDIA tooling, Conda, and every required ACE/SoulX weight without downloading or changing anything.
 
-Model-stage failures will retain the complete run directory and record the isolated environment, reviewed upstream revision, sanitized command, exit code, timestamps, stdout, stderr, and expected output paths. Do not delete failed runs before diagnosis. CUDA out-of-memory handling should recommend reducing batch size, enabling offloading, or selecting a smaller model mode; it must not silently change training semantics.
+Generation failures retain the run directory, last durable stage, prior artifact hashes, and an ACE startup log when the managed service was used. Do not delete failed runs before diagnosis. On an 8 GB GPU, keep the default managed ACE mode for voice generation; an external ACE server can retain enough VRAM to make SoulX fail. Reduce training rank or increase gradient accumulation explicitly rather than silently changing semantics.
 
 Never place credentials, contracts, artist recordings, or raw lyrics in issue reports or public logs.

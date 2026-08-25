@@ -1,3 +1,5 @@
 # SoulX-Singer environment
 
-Use a dedicated Conda environment because the upstream project currently documents its own Python and model dependency set. Keep SVC model weights under `models/shared/soulx/` and record their identifiers and licenses.
+`scripts/install-models.ps1` creates a dedicated Python 3.10 Conda environment named `soulxsinger`, installs the reviewed CUDA/PyTorch and runtime pins from `requirements-runtime.txt`, and downloads only the SVC, separator, RMVPE, and Whisper assets required by the implemented path.
+
+The application locates the standard Conda environment automatically. Set `SOULX_PYTHON` to an explicit interpreter when using a nonstandard location. Hugging Face, Numba, Matplotlib, and Weights & Biases state is redirected to ignored project-local caches; inference runs offline after installation.

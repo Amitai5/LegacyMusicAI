@@ -30,6 +30,7 @@ htmlcov/
 .coverage
 coverage.xml
 tmp/
+.tmp/
 
 # Private rights records and project material
 consent/
@@ -69,7 +70,7 @@ environments/**/conda-meta/
 # Audio datasets and generated media
 data/
 datasets/
-audio/
+/audio/
 outputs/
 renders/
 *.aac

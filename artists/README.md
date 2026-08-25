@@ -1,6 +1,6 @@
 # Artist profiles
 
-Real artist profiles are local, sensitive runtime data and are ignored by Git. Create them through the future `legacy-music artist create` command rather than copying this directory manually.
+Real artist profiles are local, sensitive runtime data and are ignored by Git. Create them with `legacy-music artist create` rather than copying this directory manually.
 
 Each profile will contain its own:
 

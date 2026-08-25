@@ -1,0 +1,19 @@
+schema_version: 1
+
+ace_step:
+  repository: https://github.com/ACE-Step/ACE-Step-1.5.git
+  commit: 14c0211d5a0653b0f63e27686f4c3f151b4d8629
+  source_license: MIT
+  weights_repository: ACE-Step/Ace-Step1.5
+
+soulx_singer:
+  repository: https://github.com/Soul-AILab/SoulX-Singer.git
+  commit: 81aeb3ae772c70093c3de74dc23c92d983801ae4
+  source_license: Apache-2.0
+  weights_repository: Soul-AILab/SoulX-Singer
+  preprocess_repository: Soul-AILab/SoulX-Singer-Preprocess
+
+seed_vc:
+  repository: https://github.com/Plachtaa/seed-vc.git
+  commit: 51383efd921027683c89e5348211d93ff12ac2a8
+  enabled_by_default: false
