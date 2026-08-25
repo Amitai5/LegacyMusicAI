@@ -37,6 +37,10 @@ class MusicGenerationRequest(GenerationModel):
     duration_seconds: int = Field(default=180, ge=10, le=600)
     bpm: int | None = Field(default=None, ge=20, le=300)
     key: str | None = Field(default=None, max_length=50)
+    vocal_language: str = Field(
+        default="en",
+        pattern=r"^(?:[a-z]{2,3}|unknown|instrumental)$",
+    )
     seed: int = Field(ge=0, le=2**63 - 1)
 
 

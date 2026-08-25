@@ -4,6 +4,8 @@ ACE-Step training is artist-specific. The shared base checkpoint is reused, whil
 
 The implemented 8 GB starting preset uses LoRA rank 16, batch size 1, gradient accumulation 4, gradient checkpointing, CPU offloading, ten epochs, and five-epoch checkpoints. Operators can raise rank and epochs explicitly; these are starting values, not guaranteed optimal settings.
 
+The pinned ACE-Step revision is installed with [`config/patches/ace-step-windows-training.patch`](../config/patches/ace-step-windows-training.patch). It disables multiprocessing data-loader workers on Windows, avoiding a spawn deadlock, and reports every optimizer step so long low-VRAM runs remain observable. The installer verifies the exact pinned revision before applying the patch and refuses unrelated changes in the upstream checkout.
+
 `train prepare` builds labeled input from the verified catalog. `train run` drives the official ACE-Step scan, label validation, tensor preprocessing, and LoRA endpoint. It can wait and export or continue in the background for `train status` and `train finalize`.
 
 The final epoch is never silently selected. `--select` or `train select` is an explicit operator action that hashes the complete adapter directory. Generation verifies that digest, serializes LoRA state changes through a local lock, unloads any prior artist adapter, and rejects arbitrary adapter paths.

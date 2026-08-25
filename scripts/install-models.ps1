@@ -12,6 +12,7 @@ $SoulXRepository = Join-Path $ProjectRoot "vendor\SoulX-Singer"
 $AceModels = Join-Path $ProjectRoot "models\shared\ace-step"
 $SoulXModels = Join-Path $ProjectRoot "models\shared\soulx"
 $CacheRoot = Join-Path $ProjectRoot "models\cache"
+$AceTrainingPatch = Join-Path $ProjectRoot "config\patches\ace-step-windows-training.patch"
 $AceCommit = "14c0211d5a0653b0f63e27686f4c3f151b4d8629"
 $SoulXCommit = "81aeb3ae772c70093c3de74dc23c92d983801ae4"
 
@@ -19,7 +20,8 @@ function Sync-PinnedRepository {
     param(
         [Parameter(Mandatory)] [string]$Path,
         [Parameter(Mandatory)] [string]$Url,
-        [Parameter(Mandatory)] [string]$Commit
+        [Parameter(Mandatory)] [string]$Commit,
+        [string]$KnownPatch = ""
     )
 
     if (-not (Test-Path (Join-Path $Path ".git"))) {
@@ -30,13 +32,36 @@ function Sync-PinnedRepository {
         throw "Unexpected upstream origin at ${Path}: $Origin"
     }
     if (git -C $Path status --porcelain) {
-        throw "Refusing to update a modified upstream checkout: $Path"
+        if (-not $KnownPatch -or -not (Test-Path -LiteralPath $KnownPatch)) {
+            throw "Refusing to update a modified upstream checkout: $Path"
+        }
+
+        git -C $Path apply --unidiff-zero --reverse --check $KnownPatch 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            throw "Refusing to update an upstream checkout with changes beyond the registered compatibility patch: $Path"
+        }
+        git -C $Path apply --unidiff-zero --reverse $KnownPatch
+        if ($LASTEXITCODE -ne 0 -or (git -C $Path status --porcelain)) {
+            git -C $Path apply --unidiff-zero $KnownPatch 2>$null
+            throw "Refusing to update an upstream checkout with changes beyond the registered compatibility patch: $Path"
+        }
     }
     git -C $Path fetch origin $Commit --depth 1
     git -C $Path checkout --detach $Commit
     $Actual = (git -C $Path rev-parse HEAD).Trim()
     if ($Actual -ne $Commit) {
         throw "Pinned checkout verification failed at $Path"
+    }
+
+    if ($KnownPatch) {
+        git -C $Path apply --unidiff-zero --check $KnownPatch
+        if ($LASTEXITCODE -ne 0) {
+            throw "Compatibility patch does not apply cleanly to pinned checkout: $KnownPatch"
+        }
+        git -C $Path apply --unidiff-zero $KnownPatch
+        if ($LASTEXITCODE -ne 0) {
+            throw "Compatibility patch failed: $KnownPatch"
+        }
     }
 }
 
@@ -82,7 +107,7 @@ finally {
 }
 
 if (-not $SkipAceStep) {
-    Sync-PinnedRepository -Path $AceRepository -Url "https://github.com/ACE-Step/ACE-Step-1.5.git" -Commit $AceCommit
+    Sync-PinnedRepository -Path $AceRepository -Url "https://github.com/ACE-Step/ACE-Step-1.5.git" -Commit $AceCommit -KnownPatch $AceTrainingPatch
     Push-Location $AceRepository
     try {
         uv sync --locked --no-dev

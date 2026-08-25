@@ -155,6 +155,7 @@ class AceStepApiEngine:
             "thinking": self.thinking,
             "use_cot_caption": self.thinking,
             "use_cot_language": self.thinking,
+            "vocal_language": request.vocal_language,
         }
         if request.bpm is not None:
             payload["bpm"] = request.bpm

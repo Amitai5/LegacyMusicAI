@@ -47,7 +47,7 @@ pwsh -File scripts/install-models.ps1
 uv run legacy-music doctor --strict --root .
 ```
 
-The installer checks out reviewed upstream commits recorded in [`config/upstreams.yaml`](config/upstreams.yaml), keeps their incompatible PyTorch stacks isolated, downloads weights into Git-ignored `models/`, and creates the ACE-Step shared-checkpoint junction. Re-running it is safe when the upstream checkouts are clean.
+The installer checks out reviewed upstream commits recorded in [`config/upstreams.yaml`](config/upstreams.yaml), applies the repository-owned Windows training compatibility patch, keeps incompatible PyTorch stacks isolated, downloads weights into Git-ignored `models/`, and creates the ACE-Step shared-checkpoint junction. Re-running it is safe when upstream checkouts contain only that registered patch; any other upstream modification fails closed.
 
 The official upstreams are [ACE-Step 1.5](https://github.com/ACE-Step/ACE-Step-1.5) and [SoulX-Singer](https://github.com/Soul-AILab/SoulX-Singer).
 

@@ -49,6 +49,13 @@ def generate(
         str | None,
         typer.Option("--key", help="Key and scale, such as C Major."),
     ] = None,
+    vocal_language: Annotated[
+        str,
+        typer.Option(
+            "--vocal-language",
+            help="ISO 639 language code for supplied lyrics, such as fa or en.",
+        ),
+    ] = "en",
     seed: Annotated[int | None, typer.Option("--seed", min=0)] = None,
     model: Annotated[
         str,
@@ -141,6 +148,7 @@ def generate(
                 duration_seconds=duration,
                 bpm=bpm,
                 key=key,
+                vocal_language=vocal_language.lower(),
                 seed=seed if seed is not None else secrets.randbits(63),
             ),
             lyrics=LyricsRequest(file=lyrics_path, sha256=sha256_file(lyrics_path)),

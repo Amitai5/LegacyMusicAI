@@ -1,0 +1,12 @@
+diff --git a/acestep/training/configs.py b/acestep/training/configs.py
+index 4149e09..a174f05 100644
+--- a/acestep/training/configs.py
++++ b/acestep/training/configs.py
+@@ -7,0 +8 @@
++import sys
+@@ -121 +122 @@ class TrainingConfig:
+-    num_workers: int = 4
++    num_workers: int = 0 if sys.platform == "win32" else 4
+@@ -128 +129 @@ class TrainingConfig:
+-    log_every_n_steps: int = 10
++    log_every_n_steps: int = 1
