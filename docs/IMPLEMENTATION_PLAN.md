@@ -2,6 +2,8 @@
 
 This backlog translates the multi-artist implementation specification into dependency-ordered, independently reviewable tasks. Stable task IDs are mirrored in GitHub Issues. The MVP follows the specification's ten milestones; explicitly later features remain in a separate post-MVP milestone.
 
+Live tracking: [all implementation issues](https://github.com/Amitai5/LegacyMusicAI/issues?q=is%3Aissue%20is%3Aopen%20label%3Aimplementation) and [milestone progress](https://github.com/Amitai5/LegacyMusicAI/milestones).
+
 ## Delivery rules
 
 Every task must:

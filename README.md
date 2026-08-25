@@ -117,7 +117,7 @@ LegacyMusicAI/
 `-- uv.lock
 ```
 
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for component boundaries, [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the dependency-ordered build plan, and [`docs/SPEC_TRACEABILITY.md`](docs/SPEC_TRACEABILITY.md) for coverage of all 77 specification sections.
+See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for component boundaries, [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) for the dependency-ordered build plan and live GitHub backlog, and [`docs/SPEC_TRACEABILITY.md`](docs/SPEC_TRACEABILITY.md) for coverage of all 77 specification sections.
 
 ## Non-negotiable safeguards
 
