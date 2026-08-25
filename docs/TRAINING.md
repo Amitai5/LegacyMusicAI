@@ -8,6 +8,8 @@ The implemented 8 GB starting preset uses LoRA rank 16, batch size 1, gradient a
 
 The final epoch is never silently selected. `--select` or `train select` is an explicit operator action that hashes the complete adapter directory. Generation verifies that digest, serializes LoRA state changes through a local lock, unloads any prior artist adapter, and rejects arbitrary adapter paths.
 
+Restart the external ACE-Step service after a training session and before generation. The upstream training lifecycle can retain LoRA bookkeeping without the base-decoder backup required to switch adapters; a fresh service restores a known model state. Default managed generation already starts from a fresh process.
+
 A ten-epoch test run with rights-cleared material should prove preprocessing compatibility, memory fit, checkpoint persistence, adapter loading, and fixed-prompt draft quality before a longer run. The repository cannot perform that material-dependent acceptance without operator-provided authorized songs.
 
 Custom voice fine-tuning is outside the default MVP path. It requires explicit voice-training authorization and a documented finding that zero-shot SoulX conversion is inadequate.

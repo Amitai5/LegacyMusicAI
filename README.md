@@ -14,7 +14,7 @@ The local CLI now implements the complete core workflow:
 - preserve originals byte-for-byte and create normalized lossless derivatives;
 - prepare labeled ACE-Step datasets from a few authorized songs;
 - preprocess, train, export, integrity-check, and explicitly select artist LoRAs;
-- generate deterministic ACE-Step WAV drafts with either the base model or a selected adapter;
+- generate fixed-seed ACE-Step WAV drafts with either the base model or a selected adapter;
 - curate exact-hash-authorized singing references and precompute RMVPE F0;
 - separate vocals, convert them with SoulX-Singer, and remix at 48 kHz stereo/24-bit;
 - persist durable run transitions, hashes, engine metadata, disclosure, and lineage; and

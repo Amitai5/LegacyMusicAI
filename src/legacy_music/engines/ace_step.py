@@ -66,7 +66,7 @@ class AceStepApiEngine:
         return self._request_json("v1/models", method="GET")
 
     def generate(self, request: MusicGenerationRequest, lyrics: str, output: Path) -> Path:
-        """Submit, poll, download, and validate one deterministic WAV generation."""
+        """Submit, poll, download, and validate one seeded WAV generation."""
         lock = file_lock(self.session_lock) if self.session_lock is not None else nullcontext()
         with lock:
             self._configure_adapter()
@@ -105,7 +105,7 @@ class AceStepApiEngine:
         is_loaded = bool(status.get("lora_loaded", False))
         if self.adapter_path is None:
             if is_loaded:
-                self.unload_lora()
+                self._unload_lora_for_transition()
             return
         is_requested_adapter_active = (
             is_loaded
@@ -114,7 +114,7 @@ class AceStepApiEngine:
         )
         if not is_requested_adapter_active:
             if is_loaded:
-                self.unload_lora()
+                self._unload_lora_for_transition()
             self.load_lora(self.adapter_path, self.adapter_name)
         self._request_json(
             "v1/lora/scale",
@@ -124,6 +124,17 @@ class AceStepApiEngine:
             },
         )
         self._request_json("v1/lora/toggle", {"use_lora": True})
+
+    def _unload_lora_for_transition(self) -> None:
+        try:
+            self.unload_lora()
+        except AceStepError as error:
+            if "Base decoder backup not found" in str(error):
+                raise AceStepError(
+                    "ACE-Step cannot restore its base decoder after this training session. "
+                    "Restart the external ACE-Step service before changing adapter state."
+                ) from error
+            raise
 
     def _generate_unlocked(
         self,

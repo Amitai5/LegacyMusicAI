@@ -1,7 +1,9 @@
 from pathlib import Path
 from typing import Any
 
-from legacy_music.engines.ace_step import AceStepApiEngine
+import pytest
+
+from legacy_music.engines.ace_step import AceStepApiEngine, AceStepError
 
 
 def test_configure_adapter_when_requested_adapter_is_active_reuses_it(
@@ -52,3 +54,22 @@ def test_configure_adapter_when_requested_adapter_is_active_reuses_it(
         ),
         ("v1/lora/toggle", {"use_lora": True}),
     ]
+
+
+def test_configure_base_when_training_state_cannot_unload_explains_restart(
+    monkeypatch: Any,
+) -> None:
+    def fail_unload() -> None:
+        raise AceStepError("ACE-Step HTTP 400: Base decoder backup not found")
+
+    engine = AceStepApiEngine()
+    monkeypatch.setattr(engine, "health", lambda: {"models_initialized": True})
+    monkeypatch.setattr(
+        engine,
+        "lora_status",
+        lambda: {"lora_loaded": True, "active_adapter": "training-test"},
+    )
+    monkeypatch.setattr(engine, "unload_lora", fail_unload)
+
+    with pytest.raises(AceStepError, match="Restart the external ACE-Step service"):
+        engine._configure_adapter()
