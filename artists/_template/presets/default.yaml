@@ -1,0 +1,7 @@
+name: default
+prompt: >
+  Original song created within the approved artist profile and release terms.
+bpm_range:
+  min: 60
+  max: 120
+voice_reference: auto

@@ -1,0 +1,17 @@
+engine:
+  id: soulx
+  repository_url: https://github.com/Soul-AILab/SoulX-Singer.git
+  repository_path: vendor/SoulX-Singer
+  conda_environment: soulxsinger
+
+models:
+  root: models/shared/soulx
+
+inference:
+  mode: svc
+  device: cuda
+  fp16: true
+  steps: 32
+  cfg: 3.0
+  auto_shift: true
+  auto_mix_accompaniment: false

@@ -1,0 +1,16 @@
+engine:
+  id: seed-vc
+  repository_url: https://github.com/Plachtaa/seed-vc.git
+  repository_path: vendor/seed-vc
+  conda_environment: seed-vc
+
+models:
+  root: models/shared/seed-vc
+
+inference:
+  device: cuda
+  mode: singing_voice_conversion
+
+training:
+  enabled_by_default: false
+  require_zero_shot_evaluation_first: true

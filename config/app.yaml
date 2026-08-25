@@ -1,0 +1,29 @@
+project:
+  name: legacy-music-ai
+
+paths:
+  artists: artists
+  shared_models: models/shared
+  model_cache: models/cache
+  runs: runs
+  vendor: vendor
+
+generation:
+  default_music_engine: ace-step
+  default_voice_engine: soulx
+  default_duration_seconds: 180
+  default_variants: 1
+  keep_intermediates: true
+
+audio:
+  preview_format: mp3
+  final_format: wav
+
+provenance:
+  enabled: true
+  require_disclosure: true
+
+safety:
+  require_approved_rights: true
+  require_voice_authorization: true
+  allow_automatic_distribution: false

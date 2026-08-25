@@ -1,0 +1,18 @@
+normalization:
+  sample_rate_hz: 44100
+  channels: 2
+  sample_format: pcm_s24le
+  preserve_dynamics: true
+  overwrite_originals: false
+
+separation:
+  minimum_stems:
+    - vocals
+    - accompaniment
+  write_f0: true
+
+mixing:
+  prevent_clipping: true
+  peak_ceiling_dbfs: -1.0
+  light_limiting: true
+  aggressive_mastering: false

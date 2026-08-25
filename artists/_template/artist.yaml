@@ -1,0 +1,21 @@
+id: example-artist
+display_name: Example Artist
+
+capabilities:
+  music_style: true
+  singing_voice: false
+
+rights:
+  manifest: rights.yaml
+
+music:
+  engine: ace-step
+  adapter: selected
+
+voice:
+  engine: soulx
+  default_reference: neutral
+
+generation:
+  default_duration_seconds: 180
+  default_variants: 1

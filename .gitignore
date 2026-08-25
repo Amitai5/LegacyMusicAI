@@ -8,10 +8,11 @@ __pycache__/
 .venv/
 venv/
 
-# Environment and credentials
+# Environment, credentials, and local overrides
 .env
 .env.*
 !.env.example
+config/local.yaml
 *.pem
 *.key
 secrets/
@@ -28,11 +29,42 @@ dist/
 htmlcov/
 .coverage
 coverage.xml
+tmp/
 
-# Rights records and private project material
+# Private rights records and project material
 consent/
 contracts/
 private/
+lyrics/
+prompts/
+
+# Real artist profiles are local. Keep only documentation and the template.
+artists/*
+!artists/README.md
+!artists/_template/
+!artists/_template/**
+
+# Shared and artist-specific model artifacts
+models/**
+!models/README.md
+checkpoints/
+*.bin
+*.ckpt
+*.onnx
+*.pt
+*.pth
+*.safetensors
+
+# Immutable execution runs
+runs/**
+!runs/README.md
+wandb/
+
+# Upstream model checkouts and isolated environments
+vendor/**
+!vendor/README.md
+environments/**/.venv/
+environments/**/conda-meta/
 
 # Audio datasets and generated media
 data/
@@ -49,15 +81,3 @@ renders/
 *.ogg
 *.opus
 *.wav
-
-# Model artifacts and experiment logs
-models/
-checkpoints/
-runs/
-wandb/
-*.bin
-*.ckpt
-*.onnx
-*.pt
-*.pth
-*.safetensors

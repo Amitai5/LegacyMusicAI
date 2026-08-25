@@ -1,0 +1,7 @@
+# Copy this file to config/local.yaml for machine-specific overrides.
+# config/local.yaml is ignored by Git.
+
+paths:
+  shared_models: /mnt/legacy-music/models/shared
+  model_cache: /mnt/legacy-music/models/cache
+  runs: /mnt/legacy-music/runs

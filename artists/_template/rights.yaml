@@ -1,0 +1,20 @@
+artist_id: example-artist
+status: pending
+effective_at: null
+expires_at: null
+
+permissions:
+  training: false
+  music_style: false
+  singing_voice: false
+  commercial_release: false
+
+approvals: []
+source_assets: []
+
+release:
+  require_human_approval: true
+  require_ai_assisted_disclosure: true
+  allow_automatic_distribution: false
+
+notes: Replace this template with a verified authorization record before adding data.

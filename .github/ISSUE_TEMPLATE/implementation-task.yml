@@ -1,0 +1,42 @@
+name: Implementation task
+description: Propose or refine work from the Legacy Music AI implementation plan.
+title: "[LM-###] "
+labels:
+  - implementation
+body:
+  - type: markdown
+    attributes:
+      value: Do not attach artist recordings, private rights evidence, credentials, or generated audio.
+  - type: input
+    id: task-id
+    attributes:
+      label: Task ID
+      placeholder: LM-###
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: State the user-visible or operational result.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Include deterministic tests and safety gates.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and risks
+      description: Reference prerequisite task IDs, upstream revisions, licenses, hardware, or data authorization.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: This issue contains no private artist data or rights evidence.
+          required: true
