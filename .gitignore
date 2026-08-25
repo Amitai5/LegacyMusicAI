@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Build and test output
+build/
+dist/
+htmlcov/
+.coverage
+coverage.xml
+
+# Rights records and private project material
+consent/
+contracts/
+private/
+
+# Audio datasets and generated media
+data/
+datasets/
+audio/
+outputs/
+renders/
+*.aac
+*.aiff
+*.alac
+*.flac
+*.m4a
+*.mp3
+*.ogg
+*.opus
+*.wav
+
+# Model artifacts and experiment logs
+models/
+checkpoints/
+runs/
+wandb/
+*.bin
+*.ckpt
+*.onnx
+*.pt
+*.pth
+*.safetensors
