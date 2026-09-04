@@ -2,19 +2,22 @@
 param(
     [switch]$SkipAceStep,
     [switch]$SkipSoulX,
-    [switch]$SkipWeights
+    [switch]$SkipWeights,
+    [switch]$IncludeSeedVC
 )
 
 $ErrorActionPreference = "Stop"
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $AceRepository = Join-Path $ProjectRoot "vendor\ACE-Step-1.5"
 $SoulXRepository = Join-Path $ProjectRoot "vendor\SoulX-Singer"
+$SeedVCRepository = Join-Path $ProjectRoot "vendor\seed-vc"
 $AceModels = Join-Path $ProjectRoot "models\shared\ace-step"
 $SoulXModels = Join-Path $ProjectRoot "models\shared\soulx"
 $CacheRoot = Join-Path $ProjectRoot "models\cache"
 $AceTrainingPatch = Join-Path $ProjectRoot "config\patches\ace-step-windows-training.patch"
 $AceCommit = "14c0211d5a0653b0f63e27686f4c3f151b4d8629"
 $SoulXCommit = "81aeb3ae772c70093c3de74dc23c92d983801ae4"
+$SeedVCCommit = "51383efd921027683c89e5348211d93ff12ac2a8"
 
 function Sync-PinnedRepository {
     param(
@@ -96,6 +99,21 @@ function Find-SoulXPython {
     return $null
 }
 
+function Find-SeedVCPython {
+    param([Parameter(Mandatory)] [string]$Conda)
+
+    $Info = (& $Conda info --json | ConvertFrom-Json)
+    $Environment = $Info.envs | Where-Object { (Split-Path $_ -Leaf) -eq "seed-vc" } | Select-Object -First 1
+    if ($null -eq $Environment) {
+        return $null
+    }
+    $Python = Join-Path $Environment "python.exe"
+    if (Test-Path $Python) {
+        return $Python
+    }
+    return $null
+}
+
 New-Item -ItemType Directory -Force -Path $AceModels, $SoulXModels, $CacheRoot | Out-Null
 
 Push-Location $ProjectRoot
@@ -155,6 +173,22 @@ if (-not $SkipSoulX) {
         & $Hf download Soul-AILab/SoulX-Singer-Preprocess --include "mel-band-roformer-karaoke/*" --include "rmvpe/*" --local-dir (Join-Path $SoulXModels "SoulX-Singer-Preprocess")
         & $Hf download openai/whisper-base
     }
+}
+
+if ($IncludeSeedVC) {
+    Sync-PinnedRepository -Path $SeedVCRepository -Url "https://github.com/Plachtaa/seed-vc.git" -Commit $SeedVCCommit
+    $Conda = Find-CondaExecutable
+    $SeedVCPython = Find-SeedVCPython -Conda $Conda
+    if ($null -eq $SeedVCPython) {
+        & $Conda create -n seed-vc -y python=3.10
+        $SeedVCPython = Find-SeedVCPython -Conda $Conda
+    }
+    if ($null -eq $SeedVCPython) {
+        throw "The seed-vc Conda environment was not created successfully."
+    }
+
+    & $SeedVCPython -m pip install --index-url https://download.pytorch.org/whl/cu121 torch==2.4.0+cu121 torchvision==0.19.0+cu121 torchaudio==2.4.0+cu121
+    & $SeedVCPython -m pip install -r (Join-Path $ProjectRoot "environments\seed-vc\requirements-runtime.txt")
 }
 
 Write-Host "Model runtimes are installed and pinned. Run: uv run legacy-music doctor --strict"

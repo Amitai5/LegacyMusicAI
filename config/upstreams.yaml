@@ -12,8 +12,13 @@ soulx_singer:
   source_license: Apache-2.0
   weights_repository: Soul-AILab/SoulX-Singer
   preprocess_repository: Soul-AILab/SoulX-Singer-Preprocess
+  dereverb_weights_repository: anvuew/dereverb_mel_band_roformer
+  dereverb_checkpoint_sha256: 9262877b87e9ebb0fb808a456b0a411fa677f5df31c8383c1254af531c078970
+  dereverb_config_sha256: 66963a9d60756076506a230b4e503c553a3beb7b4e9a10e6bcc73dee9dbd4866
 
 seed_vc:
   repository: https://github.com/Plachtaa/seed-vc.git
   commit: 51383efd921027683c89e5348211d93ff12ac2a8
+  source_license: GPL-3.0-only
+  archived: true
   enabled_by_default: false

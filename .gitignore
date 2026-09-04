@@ -39,22 +39,37 @@ private/
 lyrics/
 prompts/
 
-# Real artist profiles are local. Keep only documentation and the template.
-artists/*
-!artists/README.md
-!artists/_template/
-!artists/_template/**
+# Real artist profiles are private local runtime state. Keep only the
+# documentation and configuration template that describe the workflow.
+/artists/**
+!/artists/README.md
+!/artists/_template/
+!/artists/_template/**
 
-# Shared and artist-specific model artifacts
-models/**
-!models/README.md
-checkpoints/
+# Downloaded foundation models, caches, and trained artifacts are local.
+# models/README.md documents the expected directory structure.
+/models/**
+!/models/README.md
+
+# Defense in depth for checkpoints or trained models written elsewhere.
+**/checkpoints/
+**/lightning_logs/
 *.bin
 *.ckpt
+*.ggml
+*.gguf
+*.h5
+*.hdf5
+*.keras
+*.mlmodel
+*.mlpackage
+*.msgpack
 *.onnx
+*.pb
 *.pt
 *.pth
 *.safetensors
+*.tflite
 
 # Immutable execution runs
 runs/**

@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict
 
 from legacy_music.audio import FfmpegAudioService, probe_audio
 from legacy_music.authorization import require_capability, require_source_asset
+from legacy_music.dataset_policy import load_dataset_policy
 from legacy_music.domain.catalog import CatalogSong
 from legacy_music.domain.rights import RightsManifest
 from legacy_music.repositories.catalog import CatalogRepository
@@ -103,10 +104,12 @@ def ingest_audio(
     service = audio_service or FfmpegAudioService()
     catalog_repository = CatalogRepository(artist_root, artist_id)
     catalog = catalog_repository.load()
+    policy = load_dataset_policy(artist_root, artist_id)
     results = []
 
     for source_path in discover_audio(source):
         source_hash = sha256_file(source_path)
+        policy.require_source_allowed(source_hash, source_path.name)
         require_source_asset(rights, source_hash)
         existing = next(
             (song for song in catalog.songs if song.source_sha256 == source_hash),

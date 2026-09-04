@@ -18,6 +18,62 @@ generation:
 audio:
   preview_format: mp3
   final_format: wav
+  ffmpeg_executable: null
+
+voice_quality:
+  phrase_min_seconds: 12.0
+  phrase_max_seconds: 20.0
+  phrase_overlap_seconds: 1.0
+  candidates_per_phrase: 2
+  identity_candidates_per_phrase: 5
+  identity_max_candidates_per_phrase: 15
+  identity_phrase_min_seconds: 6.0
+  identity_phrase_max_seconds: 8.0
+  identity_phrase_overlap_seconds: 1.0
+  identity_similarity_margin: 0.08
+  identity_minimum_similarity: 0.20
+  identity_window_seconds: 4.0
+  identity_window_hop_seconds: 2.0
+  identity_window_min_voiced_fraction: 0.25
+  identity_window_similarity_margin: 0.04
+  identity_inference_cfg_rate: 1.0
+  f0_gap_fill_ms: 120
+  f0_median_error_limit_cents: 50.0
+  f0_gross_error_limit_fraction: 0.05
+  audio_dropout_repair_ms: 120
+  audio_dropout_max_gain_db: 12.0
+  local_gain_limit_db: 6.0
+  compressor_threshold_dbfs: -18.0
+  compressor_ratio: 2.0
+  compressor_attack_ms: 15.0
+  compressor_release_ms: 120.0
+  target_lufs: -14.0
+  target_lra: 9.0
+  true_peak_dbfs: -1.0
+
+training_vocals:
+  dereverb_strength: 0.90
+  lead_min_voiced_fraction: 0.72
+  lead_max_voiced_fraction: 0.98
+  lead_max_level_range_db: 8.0
+  lead_max_relative_level_deficit_db: 6.0
+  lead_min_continuous_voicing_seconds: 1.2
+  lead_min_high_band_ratio_db: -35.0
+  lead_min_center_dominance_db: 3.0
+
+final_vocal_mix:
+  vocal_presence_gain_db: 1.5
+  instrumental_gain_db: -0.75
+  presence_eq_frequency_hz: 2800.0
+  presence_eq_gain_db: 1.5
+  reverb_wet: 0.08
+  reverb_pre_delay_ms: 24.0
+  reverb_decay: 0.22
+  automatic_vocal_balance: true
+  target_vocal_to_instrumental_db: 1.5
+  maximum_automatic_balance_correction_db: 12.0
+  minimum_vocal_to_instrumental_db: -4.0
+  maximum_vocal_to_instrumental_db: 6.0
 
 provenance:
   enabled: true

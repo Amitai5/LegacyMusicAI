@@ -102,26 +102,35 @@ class AceStepTrainingClient:
         request: MusicTrainingRequest,
         tensor_dir: Path,
         output_dir: Path,
+        resume_from: Path | None = None,
     ) -> dict[str, Any]:
         """Start one low-VRAM LoRA training job."""
+        payload: dict[str, Any] = {
+            "tensor_dir": str(tensor_dir.resolve()),
+            "lora_rank": request.rank,
+            "lora_alpha": request.rank * 2,
+            "lora_dropout": 0.1,
+            "learning_rate": 0.0001,
+            "train_epochs": request.epochs,
+            "train_batch_size": 1,
+            "gradient_accumulation": request.gradient_accumulation,
+            "save_every_n_epochs": request.save_every,
+            "training_shift": 3.0,
+            "training_seed": request.seed,
+            "lora_output_dir": str(output_dir.resolve()),
+            "use_fp8": False,
+            "gradient_checkpointing": request.gradient_checkpointing,
+        }
+        if resume_from is not None:
+            checkpoint = resume_from.resolve()
+            if not (checkpoint / "training_state.pt").is_file():
+                raise AceStepError("Resume checkpoint has no training_state.pt file.")
+            if not (checkpoint / "adapter/adapter_config.json").is_file():
+                raise AceStepError("Resume checkpoint has no loadable adapter configuration.")
+            payload["resume_from"] = str(checkpoint)
         return self.engine._request_json(
             "v1/training/start",
-            {
-                "tensor_dir": str(tensor_dir.resolve()),
-                "lora_rank": request.rank,
-                "lora_alpha": request.rank * 2,
-                "lora_dropout": 0.1,
-                "learning_rate": 0.0001,
-                "train_epochs": request.epochs,
-                "train_batch_size": 1,
-                "gradient_accumulation": request.gradient_accumulation,
-                "save_every_n_epochs": request.save_every,
-                "training_shift": 3.0,
-                "training_seed": request.seed,
-                "lora_output_dir": str(output_dir.resolve()),
-                "use_fp8": False,
-                "gradient_checkpointing": request.gradient_checkpointing,
-            },
+            payload,
         )
 
     def wait(self, progress: Callable[[str], None] | None = None) -> dict[str, Any]:

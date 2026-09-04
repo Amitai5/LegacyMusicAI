@@ -1,12 +1,146 @@
+diff --git a/acestep/api/train_api_service.py b/acestep/api/train_api_service.py
+index f22e964..0147dbb 100644
+--- a/acestep/api/train_api_service.py
++++ b/acestep/api/train_api_service.py
+@@ -5,2 +5,3 @@ from __future__ import annotations
+ import json
++import math
+ import os
+@@ -18,2 +19,13 @@ from acestep.api.train_api_models import ExportLoRARequest, initialize_training_
+ 
++def _json_safe_training_status(value: Any) -> Any:
++    """Replace non-finite training telemetry with JSON-compatible null values."""
++    if isinstance(value, float) and not math.isfinite(value):
++        return None
++    if isinstance(value, dict):
++        return {key: _json_safe_training_status(item) for key, item in value.items()}
++    if isinstance(value, (list, tuple)):
++        return [_json_safe_training_status(item) for item in value]
++    return value
++
++
+ def register_training_api_routes(
+@@ -106,3 +118,3 @@ def register_training_api_routes(
+         }
+-        return wrap_response(payload)
++        return wrap_response(_json_safe_training_status(payload))
+ 
+diff --git a/acestep/api/train_api_service_http_test.py b/acestep/api/train_api_service_http_test.py
+index 874067f..12c2c51 100644
+--- a/acestep/api/train_api_service_http_test.py
++++ b/acestep/api/train_api_service_http_test.py
+@@ -5,2 +5,3 @@ from __future__ import annotations
+ from contextlib import contextmanager
++import math
+ from typing import Any, Dict, Optional
+@@ -85,2 +86,24 @@ class TrainingApiServiceHttpTests(unittest.TestCase):
+ 
++    def test_training_status_replaces_non_finite_telemetry_with_null(self):
++        """GET status should remain JSON-serializable before the first finite loss."""
++
++        client, _calls, app = self._build_client()
++        app.state.training_state = {
++            "is_training": True,
++            "current_loss": math.nan,
++            "loss_history": [{"step": 0, "loss": math.inf}],
++            "steps_per_second": math.nan,
++        }
++
++        response = client.get(
++            "/v1/training/status",
++            headers={"Authorization": "Bearer test-token"},
++        )
++
++        self.assertEqual(200, response.status_code)
++        payload = response.json()["data"]
++        self.assertIsNone(payload["current_loss"])
++        self.assertIsNone(payload["loss_history"][0]["loss"])
++        self.assertIsNone(payload["steps_per_second"])
++
+     def test_training_stop_sets_should_stop_and_calls_tensorboard_stop(self):
+diff --git a/acestep/api/train_api_lora_start_route.py b/acestep/api/train_api_lora_start_route.py
+index 0c84fa9..6cfa2cd 100644
+--- a/acestep/api/train_api_lora_start_route.py
++++ b/acestep/api/train_api_lora_start_route.py
+@@ -111,7 +111,11 @@ def register_lora_training_start_route(
+         def _runner() -> None:
+             local_run_id = run_id
+             try:
+-                for step, loss, status in trainer.train_from_preprocessed(request.tensor_dir, training_state):
++                for step, loss, status in trainer.train_from_preprocessed(
++                    request.tensor_dir,
++                    training_state,
++                    resume_from=request.resume_from,
++                ):
+                     if training_state.get("run_id") != local_run_id:
+                         break
+                     training_state["current_step"] = step
+diff --git a/acestep/api/train_api_models.py b/acestep/api/train_api_models.py
+index 137aaed..912a2e1 100644
+--- a/acestep/api/train_api_models.py
++++ b/acestep/api/train_api_models.py
+@@ -27,6 +27,7 @@ class StartTrainingRequest(BaseModel):
+     lora_output_dir: str = Field(default="./lora_output", description="Output directory")
+     use_fp8: bool = Field(default=False, description="Use FP8 training when runtime supports it")
+     gradient_checkpointing: bool = Field(default=False, description="Trade compute speed for lower VRAM usage")
++    resume_from: Optional[str] = Field(default=None, description="Checkpoint directory to resume")
+ 
+ 
+ class StartLoKRTrainingRequest(BaseModel):
 diff --git a/acestep/training/configs.py b/acestep/training/configs.py
 index 4149e09..a174f05 100644
 --- a/acestep/training/configs.py
 +++ b/acestep/training/configs.py
-@@ -7,0 +8 @@
+@@ -7,2 +7,3 @@ Contains dataclasses for LoRA and training configurations.
+ from dataclasses import dataclass, field
 +import sys
-@@ -121 +122 @@ class TrainingConfig:
+ from typing import List
+@@ -120,3 +121,3 @@ class TrainingConfig:
+     # Data loading
 -    num_workers: int = 4
 +    num_workers: int = 0 if sys.platform == "win32" else 4
-@@ -128 +129 @@ class TrainingConfig:
+     pin_memory: bool = True
+@@ -127,3 +128,3 @@ class TrainingConfig:
+     # Logging
 -    log_every_n_steps: int = 10
 +    log_every_n_steps: int = 1
+ 
+diff --git a/acestep/training/trainer.py b/acestep/training/trainer.py
+index 9900f97..23892b8 100644
+--- a/acestep/training/trainer.py
++++ b/acestep/training/trainer.py
+@@ -1041,2 +1041,3 @@ class LoRATrainer:
+                     accumulation_step = 0
++                    continue
+                 else:
+diff --git a/acestep/training/trainer_regression_test.py b/acestep/training/trainer_regression_test.py
+new file mode 100644
+index 0000000..c2f8d09
+--- /dev/null
++++ b/acestep/training/trainer_regression_test.py
+@@ -0,0 +1,25 @@
++"""Regression contracts for the legacy LoRA training loop."""
++
++from __future__ import annotations
++
++import inspect
++import unittest
++
++from acestep.training.trainer import LoRATrainer
++
++
++class LoRATrainerRegressionTests(unittest.TestCase):
++    """Protect failure handling that is expensive to exercise with the full model."""
++
++    def test_nonfinite_remainder_does_not_average_a_reset_accumulator(self):
++        """A skipped remainder must continue before dividing by its reset counter."""
++
++        source = inspect.getsource(LoRATrainer._train_with_fabric)
++        reset_then_continue = "accumulation_step = 0\n                    continue"
++
++        self.assertIn("skipping optimizer remainder step", source)
++        self.assertIn(reset_then_continue, source)
++
++
++if __name__ == "__main__":
++    unittest.main()

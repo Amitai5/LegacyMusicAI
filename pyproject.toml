@@ -13,6 +13,7 @@ authors = [
     { name = "Legacy Music AI contributors" },
 ]
 dependencies = [
+    "imageio-ffmpeg>=0.6,<1",
     "numpy>=2.4,<3",
     "pydantic>=2.12,<3",
     "pyyaml>=6.0.2,<7",

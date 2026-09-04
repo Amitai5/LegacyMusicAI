@@ -8,7 +8,7 @@ from typing import Protocol
 from pydantic import BaseModel, ConfigDict
 
 from legacy_music.domain.generation import MusicGenerationRequest
-from legacy_music.domain.voice import VoiceConversionRequest
+from legacy_music.domain.voice import VoiceConversionRequest, VoiceConversionResult
 
 
 class StemResult(BaseModel):
@@ -32,7 +32,7 @@ class MusicEngine(Protocol):
 class VoiceEngine(Protocol):
     """Boundary implemented by a singing voice conversion engine."""
 
-    def convert(self, request: VoiceConversionRequest, output: Path) -> Path:
+    def convert(self, request: VoiceConversionRequest, output: Path) -> VoiceConversionResult:
         """Convert a singing performance using an authorized voice reference."""
         ...
 

@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -39,6 +40,10 @@ class TrainingDatasetSong(TrainingModel):
     song_id: str
     audio_file: Path
     audio_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    source_kind: Literal["normalized", "accompaniment"] = "normalized"
+    source_artifact: Path | None = None
+    source_manifest: Path | None = None
+    source_manifest_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     caption_file: Path
     lyrics_file: Path | None = None
 
@@ -50,6 +55,7 @@ class TrainingDatasetManifest(TrainingModel):
     dataset_id: str = Field(pattern=r"^dataset-[0-9]{8}t[0-9]{6}z-[a-f0-9]{8}$")
     artist_id: str
     created_at: datetime
+    dataset_policy_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     custom_tag: str = Field(min_length=1, max_length=200)
     caption: str = Field(min_length=1, max_length=2_000)
     is_instrumental: bool

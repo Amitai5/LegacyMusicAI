@@ -68,7 +68,28 @@ class ProvenanceManifest(RunModel):
     voice_reference_sha256: str | None = None
     voice_source_sha256: str | None = None
     voice_reference_f0_sha256: str | None = None
+    voice_reference_ids: tuple[str, ...] = ()
+    voice_reference_hashes: dict[str, str] = Field(default_factory=dict)
+    voice_reference_f0_hashes: dict[str, str] = Field(default_factory=dict)
+    voice_reference_stem_hashes: dict[str, str] = Field(default_factory=dict)
+    voice_source_hashes: dict[str, str] = Field(default_factory=dict)
+    voice_conversion_manifest: Path | None = None
+    voice_conversion_manifest_sha256: str | None = Field(
+        default=None,
+        pattern=r"^[a-f0-9]{64}$",
+    )
+    mastering_manifest: Path | None = None
+    mastering_manifest_sha256: str | None = Field(
+        default=None,
+        pattern=r"^[a-f0-9]{64}$",
+    )
+    quality_control_manifest: Path | None = None
+    quality_control_manifest_sha256: str | None = Field(
+        default=None,
+        pattern=r"^[a-f0-9]{64}$",
+    )
     parent_run_id: str | None = None
+    parent_artifact_hashes: dict[str, str] = Field(default_factory=dict)
     output: Path
     output_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     release_approved: bool = False

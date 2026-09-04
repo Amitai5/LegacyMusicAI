@@ -14,4 +14,20 @@ Restart the external ACE-Step service after a training session and before genera
 
 A ten-epoch test run with rights-cleared material should prove preprocessing compatibility, memory fit, checkpoint persistence, adapter loading, and fixed-prompt draft quality before a longer run. The repository cannot perform that material-dependent acceptance without operator-provided authorized songs.
 
-Custom voice fine-tuning is outside the default MVP path. It requires explicit voice-training authorization and a documented finding that zero-shot SoulX conversion is inadequate.
+## Optional singing-voice fine-tuning
+
+Seed-VC fine-tuning is implemented separately from ACE-Step style training. It remains opt-in
+after a documented inadequate zero-shot evaluation. The CLI checks current `training` and
+`singing_voice` permissions; the zero-shot assessment is an operator review, not an automated
+model-quality decision.
+
+Run `voice prepare-stems`, `voice clean-vocals`, and `voice prepare-training` for the artist
+before `voice train-model <artist-id> <voice-dataset-id> --select`. Only verified
+`clean_vocals.wav` excerpts passing the current lead-vocal policy and quality checks enter the
+prepared voice dataset. Held-out validation excerpts, where available, are not fed to training.
+Changes to the music-style dataset do not automatically retrain or select a new voice model.
+
+The optional runtime uses the 44.1 kHz F0-conditioned singing preset, batch size 1, and
+`num_workers=0`. Step counts are experimental settings, not promises of identity accuracy.
+Selecting a checkpoint does not change the default voice engine or authorize distribution.
+See [Seed-VC setup](../environments/seed-vc/README.md) and [voice evaluation](VOICE.md).
